@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Up - Youth Event</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Custom Tailwind Configuration & Styles -->
+    <style>
+        /* Custom CSS Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                opacity: 1;
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+            }
+            50% {
+                opacity: 0.9;
+                filter: drop-shadow(0 0 20px rgba(0, 224, 255, 0.7));
+            }
+        }
+
+        /* NEW: Rotating Border Animation */
+        @keyframes rotateBorder {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* NEW: Reverse rotating border animation */
+        @keyframes rotateBorderReverse {
+            from {
+                transform: rotate(360deg);
+            }
+            to {
+                transform: rotate(0deg);
+            }
+        }
+
+        /* Apply animations */
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0; /* Start hidden */
+        }
+        
+        .animate-pulseGlow {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        /* NEW: Styles for the animated border container */
+        .animated-border-container {
+            position: relative;
+            overflow: hidden;
+            padding: 3px; /* This controls the border thickness */
+        }
+        .animated-border-container::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            inset: -100px; /* Make it large enough to cover the element when rotated */
+            background: conic-gradient(
+                #F400A1, /* event-pink */
+                #00E0FF, /* event-cyan */
+                #FDB813, /* event-yellow */
+                #E0E0E0, /* event-light */
+                #F400A1  /* back to pink to complete the loop */
+            );
+            /* REMOVED: animation: rotateBorder 3s linear infinite; */
+        }
+
+        /* NEW: Individual animation classes for each show */
+        .show-border-1::before {
+            animation: rotateBorder 3s linear infinite;
+        }
+        .show-border-2::before {
+            animation: rotateBorderReverse 2.5s linear infinite;
+        }
+        .show-border-3::before {
+            animation: rotateBorder 4s ease-in-out infinite;
+        }
+        .show-border-4::before {
+            animation: rotateBorderReverse 3.5s linear infinite;
+        }
+        .show-border-5::before {
+            animation: rotateBorder 2s ease-in-out infinite;
+        }
+        .show-border-6::before {
+            animation: rotateBorderReverse 3s ease-in-out infinite;
+        }
+
+        /* Staggered animation delays */
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        .delay-5 { animation-delay: 1.0s; } /* Added */
+        .delay-6 { animation-delay: 1.2s; } /* Added */
+        .delay-7 { animation-delay: 1.4s; } /* Added for countdown */
+        .delay-8 { animation-delay: 1.6s; } /* Added for footer */
+
+        /* Fireworks Canvas Style */
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50; /* In front of content */
+            pointer-events: none; /* Click-through */
+        }
+    </style>
+
+    <script>
+        // Configure Tailwind to use the logo's colors and fonts
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'event-pink': '#F400A1',
+                        'event-cyan': '#00E0FF',
+                        'event-yellow': '#FDB813',
+                        'event-light': '#E0E0E0', // The light grey/white from logo
+                    },
+                    fontFamily: {
+                        oswald: ['Oswald', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-black text-event-light font-inter overflow-x-hidden">
+
+    <!-- Fireworks Canvas (NEW) -->
+    <canvas id="fireworks-canvas"></canvas>
+
+    <div class="container mx-auto px-6 py-12 min-h-screen flex flex-col items-center justify-center text-center relative z-10">
+        <!-- Added relative z-10 to the container to ensure content is "behind" fireworks canvas, just in case -->
+
+        <!-- Header: Logo -->
+        <header class="w-full max-w-2xl mb-12 animate-fadeInUp">
+            <img 
+                src="https://i.ibb.co/gbHSZkzj/lightup-pdf-20251015-094803-0000.png" 
+                alt="Light Up Event Logo" 
+                class="w-full max-w-md mx-auto h-auto animate-pulseGlow"
+                onerror="this.src='https://placehold.co/400x400/000000/FFFFFF?text=Light+Up+Logo'; this.onerror=null;"
+            >
+        </header>
+
+        <!-- Main Content -->
+        <main class="w-full">
+            
+            <!-- Event Details Section -->
+            <section class="mb-16 animate-fadeInUp delay-1">
+                
+                <h2 class="font-oswald text-4xl md:text-5xl font-bold uppercase text-event-pink mb-10">
+                    You Are Invited!
+                </h2>
+                
+                <div class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12 text-lg md:text-xl">
+                    <!-- Date -->
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-event-cyan w-8 h-8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <span class="font-semibold text-white">Date: 22 / 11</span>
+                    </div>
+                    
+                    <!-- Time -->
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-event-yellow w-8 h-8"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span class="font-semibold text-white">Time: Starts @ 2:00 PM</span>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="flex items-center gap-3">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-event-pink w-8 h-8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <span class="font-semibold text-white">Where: Maryo7ana Church</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Shows Section -->
+            <section class="w-full max-w-6xl mx-auto">
+                <h3 class="font-oswald text-4xl md:text-5xl font-bold uppercase text-white mb-10 animate-fadeInUp delay-2">
+                    What's <span class="text-event-cyan">Happening?</span>
+                </h3>
+                
+                <!-- Updated grid to be 2 cols on medium, 3 on large -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    
+                    <!-- Show 1: The Mirror -->
+                    <div class="rounded-lg text-center transform transition-all duration-300 hover:scale-105 animate-fadeInUp delay-1 animated-border-container show-border-1">
+                        <div class="bg-gray-900 rounded-lg p-6 h-full w-full hover:shadow-2xl hover:shadow-event-pink/30">
+                            <h4 class="font-oswald text-3xl font-bold uppercase text-white"> Ø§Ù„Ù…Ø±Ø§ÙŠØ§</h4>
+                        </div>
+                    </div>
+
+                    <!-- Show 2: Black Mind -->
+                    <div class="rounded-lg text-center transform transition-all duration-300 hover:scale-105 animate-fadeInUp delay-2 animated-border-container show-border-2">
+                        <div class="bg-gray-900 rounded-lg p-6 h-full w-full hover:shadow-2xl hover:shadow-event-cyan/30">
+                            <h4 class="font-oswald text-3xl font-bold uppercase text-white"> Black Mind</h4>
+                        </div>
+                    </div>
+
+                    <!-- Show 3: The Cave -->
+                    <div class="rounded-lg text-center transform transition-all duration-300 hover:scale-105 animate-fadeInUp delay-3 animated-border-container show-border-3">
+                        <div class="bg-gray-900 rounded-lg p-6 h-full w-full hover:shadow-2xl hover:shadow-event-yellow/30">
+                            <h4 class="font-oswald text-3xl font-bold uppercase text-white"> The Cave</h4>
+                        </div>
+                    </div>
+
+                    <!-- Show 4: Games -->
+                    <div class="rounded-lg text-center transform transition-all duration-300 hover:scale-105 animate-fadeInUp delay-4 animated-border-container show-border-4">
+                        <div class="bg-gray-900 rounded-lg p-6 h-full w-full hover:shadow-2xl hover:shadow-event-light/30">
+                            <h4 class="font-oswald text-3xl font-bold uppercase text-white"> Games</h4>
+                        </div>
+                    </div>
+
+                    <!-- Show 5: The Comedy Show (NEW) -->
+                    <div class="rounded-lg text-center transform transition-all duration-300 hover:scale-105 animate-fadeInUp delay-5 animated-border-container show-border-5">
+                        <div class="bg-gray-900 rounded-lg p-6 h-full w-full hover:shadow-2xl hover:shadow-event-pink/30">
+                            <h4 class="font-oswald text-3xl font-bold uppercase text-white"> Ù…Ø´ Ø·Ø¨ÙŠØ¹ÙŠ Ø®Ø§Ù„Øµ</h4>
+                        </div>
+                    </div>
+
+                    <!-- Show 6: The Main Show (NEW) -->
+                    <div class="rounded-lg text-center transform transition-all duration-300 hover:scale-105 animate-fadeInUp delay-6 animated-border-container show-border-6">
+                        <div class="bg-gray-900 rounded-lg p-6 h-full w-full hover:shadow-2xl hover:shadow-event-cyan/30">
+                            <h4 class="font-oswald text-3xl font-bold uppercase text-white">The Main Show</h4>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <!-- Countdown Timer Section (NEW) -->
+        <section class="w-full max-w-4xl mx-auto mt-16 mb-12 animate-fadeInUp delay-7">
+            <h3 class="font-oswald text-4xl md:text-5xl font-bold uppercase text-white mb-10">
+                Time <span class="text-event-yellow">Remaining</span>
+            </h3>
+            <div id="countdown-timer" class="flex flex-wrap justify-center items-center gap-4 md:gap-8">
+                <div class="text-center bg-gray-900 border-2 border-event-light rounded-lg p-4 w-24 min-w-max">
+                    <span id="days" class="font-oswald text-5xl font-bold text-event-cyan">00</span>
+                    <span class="block text-sm uppercase text-gray-400">Days</span>
+                </div>
+                <div class="text-center bg-gray-900 border-2 border-event-light rounded-lg p-4 w-24 min-w-max">
+                    <span id="hours" class="font-oswald text-5xl font-bold text-event-pink">00</span>
+                    <span class="block text-sm uppercase text-gray-400">Hours</span>
+                </div>
+                <div class="text-center bg-gray-900 border-2 border-event-light rounded-lg p-4 w-24 min-w-max">
+                    <span id="minutes" class="font-oswald text-5xl font-bold text-event-yellow">00</span>
+                    <span class="block text-sm uppercase text-gray-400">Minutes</span>
+                </div>
+                <div class="text-center bg-gray-900 border-2 border-event-light rounded-lg p-4 w-24 min-w-max">
+                    <span id="seconds" class="font-oswald text-5xl font-bold text-event-light">00</span>
+                    <span class="block text-sm uppercase text-gray-400">Seconds</span>
+                </div>
+            </div>
+            <div id="countdown-message" class="font-oswald text-4xl font-bold uppercase text-event-cyan mt-10" style="display: none;">
+                The Event is Happening Now!
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-16 animate-fadeInUp delay-8"> <!-- Updated delay -->
+            <p class="text-gray-400 font-oswald text-2xl uppercase">See You There!</p>
+            <p class="text-gray-500 text-sm mt-2">&copy; 2025 Maryo7ana Church. All rights reserved.</p>
+        </footer>
+
+    </div>
+
+    <!-- Countdown Timer Script -->
+    <script>
+        // Use a variable to store the interval ID
+        let countdownInterval;
+
+        function startCountdown() {
+            // Clear any existing interval to prevent duplicates
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            // Set the date we're counting down to
+            // Note: Months are 0-indexed in JavaScript, so November is 10
+            const countDownDate = new Date("2025-11-22T14:00:00").getTime();
+
+            countdownInterval = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = countDownDate - now;
+
+                // Time calculations
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Get elements
+                const daysEl = document.getElementById("days");
+                const hoursEl = document.getElementById("hours");
+                const minutesEl = document.getElementById("minutes");
+                const secondsEl = document.getElementById("seconds");
+                const timerEl = document.getElementById("countdown-timer");
+                const messageEl = document.getElementById("countdown-message");
+
+                // Display the result
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    if (timerEl) timerEl.style.display = "none";
+                    if (messageEl) messageEl.style.display = "block";
+                } else {
+                    if (daysEl) daysEl.innerHTML = String(days).padStart(2, '0');
+                    if (hoursEl) hoursEl.innerHTML = String(hours).padStart(2, '0');
+                    if (minutesEl) minutesEl.innerHTML = String(minutes).padStart(2, '0');
+                    if (secondsEl) secondsEl.innerHTML = String(seconds).padStart(2, '0');
+                }
+            }, 1000);
+        }
+
+        // Start the countdown when the script loads
+        startCountdown();
+    </script>
+
+    <!-- Fireworks Script (NEW) -->
+    <script>
+        (function() {
+            const canvas = document.getElementById('fireworks-canvas');
+            if (!canvas) {
+                console.error("Fireworks canvas not found");
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+            
+            let fireworks = [];
+            let particles = [];
+            
+            // Use the event's colors
+            const eventColors = ['#F400A1', '#00E0FF', '#FDB813', '#E0E0E0'];
+
+            function setCanvasSize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function random(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            // --- Firework (Rocket) Class ---
+            function Firework(sx, sy, tx, ty) {
+                this.x = sx;
+                this.y = sy;
+                this.sx = sx;
+                this.sy = sy;
+                this.tx = tx;
+                this.ty = ty;
+                this.distanceToTarget = Math.sqrt(Math.pow(tx - sx, 2) + Math.pow(ty - sy, 2));
+                this.distanceTraveled = 0;
+                this.coordinates = [];
+                this.coordinateCount = 3;
+                while (this.coordinateCount--) {
+                    this.coordinates.push([this.x, this.y]);
+                }
+                this.angle = Math.atan2(ty - sy, tx - sx);
+                this.speed = 2;
+                this.acceleration = 1.05;
+                this.brightness = random(50, 70);
+                this.targetRadius = 1;
+            }
+
+            Firework.prototype.update = function(index) {
+                this.coordinates.pop();
+                this.coordinates.unshift([this.x, this.y]);
+
+                if (this.targetRadius < 8) {
+                    this.targetRadius += 0.3;
+                } else {
+                    this.targetRadius = 1;
+                }
+
+                this.speed *= this.acceleration;
+
+                let vx = Math.cos(this.angle) * this.speed;
+                let vy = Math.sin(this.angle) * this.speed;
+                this.distanceTraveled = Math.sqrt(Math.pow(this.x - this.sx, 2) + Math.pow(this.y - this.sy, 2));
+
+                if (this.distanceTraveled >= this.distanceToTarget) {
+                    createParticles(this.tx, this.ty);
+                    fireworks.splice(index, 1);
+                } else {
+                    this.x += vx;
+                    this.y += vy;
+                }
+            };
+
+            Firework.prototype.draw = function() {
+                ctx.beginPath();
+                ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+                ctx.lineTo(this.x, this.y);
+                ctx.strokeStyle = 'hsl(' + random(0, 360) + ', 100%, ' + this.brightness + '%)';
+                ctx.stroke();
+            };
+
+            // --- Particle Class ---
+            function Particle(x, y) {
+                this.x = x;
+                this.y = y;
+                this.angle = random(0, Math.PI * 2);
+                this.speed = random(1, 10);
+                this.friction = 0.95;
+                this.gravity = 1;
+                this.hue = random(0, 360);
+                this.brightness = random(50, 80);
+                this.alpha = 1;
+                this.decay = random(0.015, 0.03);
+                this.color = eventColors[Math.floor(random(0, eventColors.length))];
+            
